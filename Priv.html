@@ -1,0 +1,258 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<style>
+    th{
+        text-align: center;
+        border-bottom: 1px rgb(209, 207, 207) solid;
+        font-weight: unset;
+    }
+    table{
+        border-top: 1px rgb(209, 207, 207) solid;
+    }
+    #content{
+        margin:15px 0;
+    }
+    #body{
+        margin-top: 10px;
+        margin-left: 20px;
+    }
+    #check{
+        margin-top: 20px;   
+    }
+    .card.card-body{
+        border: none;
+    }
+    #Uno{
+        width: 100px;
+    }
+    #resultSpan{
+        color:red;
+        margin-left:10px;
+    }
+</style>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script>
+$.noConflict();
+    jQuery(document).ready(function () {
+        
+        jQuery.ajax({
+            type:"POST",
+            url:"http://127.0.0.1:9826/priv",
+            success:function(data){
+                if(data=="info_err"){
+                    window.location.href = "http://127.0.0.1:9826/privErr.html";
+                }
+                else{
+                    var content='<table cellpadding="10" cellspacing="0">';
+                    for(var i=0;i<data.length;i++){
+                        content+='<tr>';
+                        for(var j=0;j<data[i].length;j++) {
+                            content+='<th>'+data[i][j]+'</th>';
+                        }
+                        // if(i==0){
+                        //     content+='<th>操作</th>';
+                        // }else{
+                        //     content+='<th>';
+                        //     content+='<button class="btn btn-outline-info btn-lg btn-sm" id="'+ data[i][0]+'" type="button" data-toggle="collapse" data-target="#grankPriv" aria-expanded="false" aria-controls="grankPriv">分配</button>&nbsp;&nbsp;&nbsp;';
+                        //     content+='<button class="btn btn-outline-info btn-lg btn-sm" id="'+ data[i][0]+'" type="button"  data-toggle="collapse" data-target="#revokePriv" aria-expanded="false" aria-controls="revokePriv"">回收</button></th>';
+                        //     content+='<button class="show" id="'+ data[i][0]+'" type="button">分配</button>&nbsp;&nbsp;&nbsp;';
+                        //     content+='<button class="show" id="'+ data[i][0]+'" type="button">回收</button></th>';
+                        // }
+                        content+='</tr>';   
+                    }
+                    content+='</table>';
+                    jQuery("#content").html(content);
+                }
+            }
+        });
+
+        jQuery("#grantSumbit").click(function(){
+            var jsonData={};
+            var table="",operate="";
+            jsonData['Uno'] = jQuery("#grantUno").val();
+            jQuery("input[name='grantTable']:checked").each(function(i){
+                table+='DriveSystem.'+jQuery(this).val(); 
+            });
+            jsonData['table']=table;
+            jQuery("input[name='grantOperate']:checked").each(function(i){
+                if(i!=jQuery(this).length-1){
+                   operate +=',';
+                }
+                operate+= jQuery(this).val(); 
+            });
+            jsonData['operate']=operate;
+            console.log(jsonData);
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/grantPriv",
+                datatype:'json',
+                data:jsonData,
+                success:function(data){
+                    if(data=='err'){
+                        jQuery('#resultSpan').text('分配失败');
+                    }else{
+                        jQuery('#resultSpan').text('分配成功');
+                    }
+                }
+            });
+        });
+        jQuery("#revokeSumbit").click(function(){
+            var jsonData={};
+            var table="",operate="";
+            jsonData['Uno'] = jQuery("#revokeUno").val();
+            jQuery("input[name='revokeTable']:checked").each(function(i){
+                table+='DriveSystem.'+jQuery(this).val(); 
+            });
+            jsonData['table']=table;
+            jQuery("input[name='revokeOperate']:checked").each(function(i){
+                if(i!=jQuery(this).length-1){
+                   operate +=',';
+                }
+                operate+= jQuery(this).val(); 
+            });
+            jsonData['operate']=operate;
+            console.log(jsonData);
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/revokePriv",
+                datatype:'json',
+                data:jsonData,
+                success:function(data){
+                    if(data=='err'){
+                        jQuery('#resultSpan').text('回收失败');
+                    }else{
+                        jQuery('#resultSpan').text('回收成功');
+                    }
+                }
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<div id="body">
+    <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+        <p>权限汇总<span id="resultSpan"></span></p>
+        <div id="content"></div>
+        <div>
+            <button class="btn btn-outline-info btn-lg btn-sm" type="button" value="grank" data-toggle="collapse" data-target="#grankPriv" aria-expanded="false" aria-controls="grankPriv">分配</button>&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-outline-info btn-lg btn-sm" type="button" value="revoke" data-toggle="collapse" data-target="#revokePriv" aria-expanded="false" aria-controls="revokePriv">回收</button>
+        </div>
+    </li>
+    </ul>
+
+    <div class="collapse" id="grankPriv">
+        <div class="card card-body">
+            <div id="check"><p>分配权限</p></div>
+            <div id="check Uno">
+                    <p>请输入用户账号</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="grantUno" aria-describedby="basic-addon2" required>
+                    </div>
+            </div>
+            <div id="check">
+                    <p>请选择操作对象：</p>
+                    <div class="form-check form-check-inline">
+                            <input name="grantTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_DI" value="view_DI">
+                            <label class="form-check-label" for="view_DI">基本信息</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input name="grantTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_E" value="view_E">
+                            <label class="form-check-label" for="view_E">年审情况</label>
+                        </div>  
+                        <div class="form-check form-check-inline">
+                            <input name="grantTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_I" value="view_I">
+                            <label class="form-check-label" for="view_I">违章肇事</label>
+                        </div>    
+                        <div class="form-check form-check-inline">
+                            <input name="grantTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_IR" value="view_IR">
+                            <label class="form-check-label" for="view_IR">奖惩管理</label>
+                    </div> 
+            </div>  
+            <div  id="check">
+            <p>请选择操作方式</p>
+            <div class="form-check form-check-inline">
+                <input name="grantOperate" class="form-check-input" type="checkbox" id="SELECT" value="SELECT">
+                <label class="form-check-label" for="SELECT">查询</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input name="grantOperate" class="form-check-input" type="checkbox" id="DELETE" value="DELETE">
+                <label class="form-check-label" for="DELETE">删除</label>
+            </div>  
+            <div class="form-check form-check-inline">
+                <input name="grantOperate" class="form-check-input" type="checkbox" id="UPDATE" value="UPDATE">
+                <label class="form-check-label" for="UPDATE">更新</label>
+            </div>    
+            <div class="form-check form-check-inline">
+                <input name="grantOperate" class="form-check-input" type="checkbox" id="INSERT" value="INSERT">
+                <label class="form-check-label" for="INSERT">添加</label>
+            </div> 
+            </div>    
+            <div id="check">
+                    <button class="btn btn-outline-info btn-lg btn-sm" id="grantSumbit" type="button"  data-toggle="collapse" data-target="#grankPriv" aria-expanded="false" aria-controls="grankPriv">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="collapse" id="revokePriv">
+            <div class="card card-body">
+                <div id="check"><p id="privSpan">回收权限</p></div>
+                <div id="check Uno">
+                        <p>请输入用户账号<span id="deleteSpan"></span></p>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="revokeUno" aria-describedby="basic-addon2" required>
+                        </div>
+                </div>
+                <div id="check">
+                        <p>请选择操作对象：</p>
+                        <div class="form-check form-check-inline">
+                                <input name="revokeTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_DI" value="view_DI">
+                                <label class="form-check-label" for="view_DI">基本信息</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input name="revokeTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_E" value="view_E">
+                                <label class="form-check-label" for="view_E">年审情况</label>
+                            </div>  
+                            <div class="form-check form-check-inline">
+                                <input name="revokeTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_I" value="view_I">
+                                <label class="form-check-label" for="view_I">违章肇事</label>
+                            </div>    
+                            <div class="form-check form-check-inline">
+                                <input name="revokeTable" class="form-check-input" name="inlineRadioOptions" type="radio" id="view_IR" value="view_IR">
+                                <label class="form-check-label" for="view_IR">奖惩管理</label>
+                        </div> 
+                </div>  
+                <div  id="check">
+                <p>请选择操作方式</p>
+                <div class="form-check form-check-inline">
+                    <input name="revokeOperate" class="form-check-input" type="checkbox" id="SELECT" value="SELECT">
+                    <label class="form-check-label" for="SELECT">查询</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input name="revokeOperate" class="form-check-input" type="checkbox" id="DELETE" value="DELETE">
+                    <label class="form-check-label" for="DELETE">删除</label>
+                </div>  
+                <div class="form-check form-check-inline">
+                    <input name="revokeOperate" class="form-check-input" type="checkbox" id="UPDATE" value="UPDATE">
+                    <label class="form-check-label" for="UPDATE">更新</label>
+                </div>    
+                <div class="form-check form-check-inline">
+                    <input name="revokeOperate" class="form-check-input" type="checkbox" id="INSERT" value="INSERT">
+                    <label class="form-check-label" for="INSERT">添加</label>
+                </div> 
+                </div>    
+                <div id="check">
+                        <button class="btn btn-outline-info btn-lg btn-sm" id="revokeSumbit" type="button"  data-toggle="collapse" data-target="#revokePriv" aria-expanded="false" aria-controls="revokePriv">确定</button>
+                </div>
+            </div>
+        </div>
+</div>
+</body>
+</html>

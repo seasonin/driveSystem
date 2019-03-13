@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<style>
+    .row{
+        margin:0 100px;
+    }
+    #addSpan{
+        color: rgb(180,132,132);
+
+    }
+</style>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script>
+    $.noConflict();
+    jQuery(document).ready(function () {
+        jQuery("#pointsTips").hide();
+        jQuery("#revokedTips").hide();
+        jQuery("#addBtn").click(function(){
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/addIllegal",
+                datatype:'json',
+                data:{Ino:jQuery('#Ino').val(),Idescribe:jQuery("#Idescribe").val(),Processing:jQuery('#Processing').val(),DePoints:jQuery("#DePoints").val(),Revoked:jQuery("#Revoked").val()},  
+                success:function(data){
+                    if(data=='err'){
+                        alert('添加失败');
+                    }else{
+                        alert('添加成功');
+                    }
+                }
+            });
+            return false;
+         });
+        
+        jQuery("#DePoints").mouseenter(function(){
+            jQuery("#pointsTips").show();
+        });
+        jQuery("#DePoints").mouseleave(function(){
+            jQuery("#pointsTips").hide();
+        });
+        jQuery("#Revoked").mouseenter(function(){
+            jQuery("#revokedTips").show();
+        });
+        jQuery("#Revoked").mouseleave(function(){
+            jQuery("#revokedTips").hide();
+        });
+    });
+</script>
+</head>
+<body>
+<div id="container">
+    <div class="py-5 text-center">
+        <h4>添加违章肇事信息</h2>
+    </div>
+        <form class="needs-validation" novalidate>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="Ino">事件编号</label>
+                    <input type="text" class="form-control" id="Ino" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                    该项必填
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="DePoints">扣分情况<span class="text-muted">(选填)</span><span id="pointsTips" class="text-muted">&nbsp;&nbsp;&nbsp;1~12分之间</span></label>
+                    <input type="text" class="form-control" id="DePoints" placeholder="" value="">
+                    
+                </div>
+                <div class="col-md-4 mb-3">
+                    
+                    <label for="Revoked">吊销情况<span class="text-muted">(选填)</span><span id="revokedTips" class="text-muted">&nbsp;&nbsp;&nbsp;是或否</span></label>
+                    <input type="text" class="form-control" id="Revoked" placeholder="" value="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                        <label for="Idescribe">事件描述</label>
+                        <input type="text" class="form-control" id="Idescribe" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                        该项必填
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="Processing">处理结果<span class="text-muted">(选填)</span></label>
+                    <input type="text" class="form-control" id="Processing" placeholder="">
+                </div>
+            </div>
+            <hr class="mb-4">
+            <div style="margin:0 115px 50px 115px">
+                <button class="btn btn-outline-info btn-lg btn-block" id="addBtn" type="submit">提交</button>
+            </div>
+        </form>  
+</div>
+</body>
+</html>
