@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<link rel="stylesheet" href="/css/layui.css" media="all">
+<style>
+    .row{
+        margin:0 100px;
+    }
+    #addSpan{
+        color: red;
+    }
+</style>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script src="/layui.js"></script>
+<script>
+    $.noConflict();
+    jQuery(document).ready(function () {
+        jQuery("#addBtn").click(function(){
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/addExamine",
+                datatype:'json',
+                data:{ExamineTime:jQuery('#ExamineTime').val(),Dno:jQuery('#Dno').val(),ExamineUnits:jQuery("#ExamineUnits").val(),ExamineCase:jQuery('#ExamineCase').val()},  
+                success:function(data){
+                    if(data=='err'){
+                        alert('添加失败');
+                    }else{
+                        alert('添加成功');
+                    }
+                }
+            });
+            return false;
+         });
+        layui.use('laydate', function(){
+            var laydate = layui.laydate;
+
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#ExamineTime' //指定元素
+                ,type:"year"
+                ,btns:['clear', 'confirm']
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<div id="container">
+    <div class="py-5 text-center">
+        <h4>添加年审信息</h2>
+    </div>
+        <form class="needs-validation" novalidate>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                        <label for="ExamineTime">审验年份</label>
+                        <input type="text" class="form-control" id="ExamineTime" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                        该项必填
+                        </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="Dno">驾驶员编号</label>
+                    <input type="text" class="form-control" id="Dno" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                    该项必填
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                        <label for="ExamineUnits">审验单位</label>
+                        <input type="text" class="form-control" id="ExamineUnits" placeholder="" value="" required>
+                        <div class="invalid-feedback">
+                        该项必填
+                        </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="ExamineCase">审验情况</label>
+                    <input type="text" class="form-control" id="ExamineCase" placeholder="" value="" required>
+                    <div class="invalid-feedback">
+                    该项必填
+                    </div>
+                </div>
+            </div>
+            <hr class="mb-4">
+            <div style="margin:0 115px 50px 115px">
+                <button class="btn btn-outline-info btn-lg btn-block" id="addBtn" type="submit">提交</button>
+            </div>
+        </form>  
+</div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meata charset="utf-8"></meata>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>注册</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <style>
+        #nav{
+            margin:0 0 20px 0;
+            height:50px;
+        }
+        #nav-title{
+            color:white;
+            line-height: 50px;
+            margin-left: 50px;
+            float: left
+        }
+        #nav-item{
+            color:white;
+            line-height: 50px;
+            margin-right: 50px;
+            float:right;
+        }
+        input,.input-group-append{
+            margin-top:15px;
+            height:38px;
+        }
+        .checkbox.mb-3 label{
+            padding-left: 4px;
+            cursor: pointer;
+            margin: 0;
+            vertical-align: middle;
+        }
+        .checkbox.mb-3 input{
+            vertical-align:middle; 
+        }
+        #text-center{
+           text-align: center;
+        }
+        #setBorder{
+            border: 1px solid gray;
+            border-radius:10px;
+            margin:30px auto;
+            padding: 15px;
+            width:max-content; 
+        }  
+        #registerTips{
+            color:red;
+        }  
+    </style>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+    $.noConflict();
+    jQuery(document).ready(function () {
+        jQuery("#imgYzm").click(function(){
+            this.src =  '/getCaptcha?d='+Math.random();
+        });
+        jQuery("#btn-submit").click(function confirm(){
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/register",
+                datatype:'json',
+                data:{captcha:(jQuery(".form-control.captcha").val()).toLowerCase(),inputUserName:jQuery('#inputUserName').val(),inputPassword:jQuery('#inputPassword').val()},
+                success:function(data){
+                    if(data=='captchaErr'){
+                        jQuery("#imgYzm").trigger('click');
+                        jQuery('#registerTips').text('验证码输入错误');
+                    }else if(data=='err'){
+                        window.location.href="http://127.0.0.1:9826/signUp.html";
+                    } else {
+                        window.location.href="http://127.0.0.1:9826/success_register.html";
+                    }
+                }
+            });
+
+        });
+    });
+    </script>
+    
+</head>
+<body>
+<div id="nav"  class="bg-info">
+    <a href="#" id="nav-title">驾驶员管理系统</a>
+    <a href="http://127.0.0.1:9826/signIn.html" id="nav-item">signIn</a>
+    <a href="http://127.0.0.1:9826/signUp.html" id="nav-item">signUp</a>
+</div>
+<div class="container">
+<h1 class="h3 mb-3 font-weight-normal" id="text-center">Please sign up</h1>
+<div id="setBorder">
+<form id="form-signUp" onsubmit='return false';>
+    <label for="inputUserName" class="sr-only">UserName</label>
+    <input type="text" id="inputUserName" name="inputUserName" class="form-control" placeholder="账号" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="密码" required>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control captcha" placeholder="验证码" aria-label="验证码" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <span class="input-group-text" id="basic-addon2"><img src="/getCaptcha" alt="captcha" id="imgYzm"></span>
+        </div>
+    </div>
+    <p id="registerTips"></p>
+    <button class="btn btn-info btn-block" type="submit" id="btn-submit">注册</button>
+</form>
+</div>
+</div>
+<p class="mt-5 mb-3 text-muted" id="text-center">&copy; 2018-2019</p>
+</body>
+</html>

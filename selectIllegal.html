@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<style>
+    #content,#Isolation{
+        margin-top: 20px;
+    }
+    #selectSpan,#selectFuzzySpan{
+        color:red;
+        margin-left:10px;
+    }
+    th{
+        text-align: center;
+        border-top: 1px rgb(209, 207, 207) solid;
+        font-weight: unset;
+    }
+    .input-group.mb-3{
+        width:300px;
+    }
+    #body{
+        margin-top: 10px;
+        margin-left: 20px;
+    }
+</style>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script>
+$.noConflict();
+    jQuery(document).ready(function () {
+        jQuery("#selectBtn").click(function(){
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/selectIllegal",
+                datatype:'json',
+                data:{Ino:jQuery('#selectIno').val()},
+                success:function(data){
+                    if(data=='err'){
+                        jQuery('#selectSpan').text('查询失败');
+                    }else{
+                        var content='<table cellpadding="10" cellspacing="0"><tr>';
+                        for(var i=0;i<data.length;i++){
+                            content+='<tr>';
+                            for(var j=0;j<data[i].length;j++) {
+                                content+='<th>'+data[i][j]+'</th>';
+                            }
+                            content+='</tr>';   
+                            }
+                        content+='</table>';
+                        jQuery("#selectContent").html(content);
+                    }
+                }
+            });
+        });
+        jQuery("#selectFuzzyBtn").click(function(){
+            jQuery.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:9826/selectFuzzyIllegal",
+                datatype:'json',
+                data:{Idescribe:jQuery('#selectFuzzyIdescribe').val()},
+                success:function(data){
+                    if(data=='err'){
+                        jQuery('#selectFuzzySpan').text('查询失败');
+                    }else{
+                        var content='<table cellpadding="10" cellspacing="0"><tr>';
+                        for(var i=0;i<data.length;i++){
+                            content+='<tr>';
+                            for(var j=0;j<data[i].length;j++) {
+                                content+='<th>'+data[i][j]+'</th>';
+                            }
+                            content+='</tr>';   
+                            }
+                        content+='</table>';
+                        jQuery("#selectFuzzyContent").html(content);
+                    }
+                }
+            });
+        });
+    });
+</script>
+</head>
+<body>
+<div id="body">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><div id="Isolation">
+                <p>查询违章肇事信息<span id="selectSpan"></span></a>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="selectIno" placeholder="事件编号" aria-label="事件编号" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary btn-outline-info" type="button" id="selectBtn">提交</button>
+                    </div>
+                </div>
+        </div><div id="selectContent"></div></li>
+
+        <li class="list-group-item"><div id="Isolation">
+                <p>模糊搜索违章肇事信息<span id="selectFuzzySpan"></span></a>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="selectFuzzyIdescribe" placeholder="关键字" aria-label="关键字" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary btn-outline-info" type="button" id="selectFuzzyBtn">提交</button>
+                    </div>
+                </div>
+        </div><div id="selectFuzzyContent"></div></li>
+        <li class="list-group-item"></li>
+
+    </ul>
+</div>
+</body>
+</html>
